@@ -11,7 +11,12 @@ class Database {
     private $error;
 
     public function __construct() {
-        $conn = 'mysql:host=' . $this->dbHost . ';dbname=' . $this->dbName;
+      $this->init();
+    }
+
+    public function init()
+    {
+          $conn = 'mysql:host=' . $this->dbHost . ';dbname=' . $this->dbName;
         $options = array(
             PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
@@ -23,12 +28,33 @@ class Database {
             echo $this->error;
         }
     }
-
     //Allows us to write queries
     public function query($sql) {
         $this->statement = $this->dbHandler->prepare($sql);
     }
 
+    public function insert($data, $table)
+    {
+         
+        $pdo = $this->dbHandler;
+        $stmt = $pdo->prepare("INSERT INTO $table (Year, Age ,Ethnic ,Sex ,Area, count ) VALUES (?,?,?,?,?,?)");
+        try {
+            $pdo->beginTransaction();
+
+            foreach ($data as $row)
+            {
+                // $d = explode(  ",", $row);
+                // print_r($row);
+              $stmt->execute($row);
+            }
+            $pdo->commit();
+          
+        }catch (Exception $e){
+            echo("error");
+            $pdo->rollback();
+            throw $e;
+        }
+    }
     //Bind values
     public function bind($parameter, $value, $type = null) {
         /** @noinspection PhpSwitchCanBeReplacedWithMatchExpressionInspection */
@@ -55,14 +81,22 @@ class Database {
 
     //Return an array
     public function resultSet() {
+        try {
         $this->execute();
         return $this->statement->fetchAll(PDO::FETCH_OBJ);
+} catch (PDOException $e) {
+  echo "The user could not be added.<br>".$e->getMessage();
+}
     }
 
     //Return a specific row as an object
     public function single() {
-        $this->execute();
+               try { 
+                   $this->execute();
         return $this->statement->fetch(PDO::FETCH_OBJ);
+        } catch (PDOException $e) {
+ print_r ($e);
+}
     }
 
     //Get's the row count

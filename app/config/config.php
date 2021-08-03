@@ -4,7 +4,7 @@
 const DB_HOST = 'localhost'; //Add your db host
 const DB_USER = 'root'; // Add your DB root
 const DB_PASS = ''; //Add your DB pass
-const DB_NAME = 'dpo'; //Add your DB Name
+const DB_NAME = 'upload' ; //'dpo'; //Add your DB Name
 
 //APP_ROOT
 define('APP_ROOT', dirname(dirname(__FILE__)));
