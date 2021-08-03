@@ -2,6 +2,7 @@
 class Data {
     private $db;
     public  $data;
+    public $delimiter = 3000;
     public function __construct() {
         
         $this->db = new Database;
@@ -20,24 +21,27 @@ class Data {
      {
 
 
-                 
+                    set_time_limit(500); // 
                     $file =  '../../../../../tmp/Data8277.csv';
                 $output = shell_exec("cat $file  | wc -l");
-                echo $output ; die;
+                $loop =  ceil(intval($output) / $this->delimiter);
+                 echo $output;
             $handle = fopen($file, "r") or die("Couldn't get handle");
         $i = 0;
         $count = 0;
         $chunk = 0;
         $arr = [];
             if ($handle) {
-                while (!feof($handle)) {
-                     echo(feof($handle));
+                 while (!feof($handle)) {
+                // while ($chunk < $output ) {
+                    //  echo(feof($handle));
                      
                     // $line = fgets($handle);
                      $line = fgetcsv($handle);
  
                     $arr[] = $line ;
-                    if($i > 50000){
+                    if($i > $this->delimiter ){
+                        sleep(0.);
                         if($arr[0][0]  == "Year")  array_shift($arr);
                         $this->data = $arr;
                     $this->insert();
